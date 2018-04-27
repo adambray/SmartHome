@@ -1,24 +1,23 @@
-import HeatRegulator.Oven;
+
+package HeatRegulator;
 
 public class App {
     public static void main(String args[]) {
-        new App().regulateTemp();
+        new App().regulateTemp(new OvenAdapter(new Oven()));
     }
-    private void regulateTemp() {
-        int goalT, t, s;
 
-        while(true) {
-            Oven o = new Oven();
+    private void regulateTemp(HeatRegulator regulator) {
+        int goalTemp, currentTemp;
 
-            goalT = o.in(0x02);
-            t = o.in(0x01);
-            s = o.in(0x03);
+        while (true) {
+            goalTemp = regulator.getGoalTemperature();
+            currentTemp = regulator.getCurrentTemperature();
 
-            if(s == 1) {
-                if(t < goalT) {
-                    o.out(0x04, true);
+            if (regulator.isOn()) {
+                if (currentTemp < goalTemp) {
+                    regulator.turnOnBurner();
                 } else {
-                    o.out(0x04, false);
+                    regulator.turnOffBurner();
                 }
             }
         }
